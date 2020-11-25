@@ -3,7 +3,7 @@ My backend boilerplate for projects
 * Node.js & Express
 
 * Link to Github repo Backend
-https://github.com/sweets86/Backend-Stripe-Movieline
+https://github.com/sweets86/myBackend
 
 # To run the server
 Download the files from Github and copy the contents of a new folder and open the folder in VSC.
