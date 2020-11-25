@@ -1,0 +1,24 @@
+{
+  "name": "mybackend",
+  "version": "1.0.0",
+  "description": "My backend boilerplate for projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sweets86/myBackend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sweets86/myBackend/issues"
+  },
+  "homepage": "https://github.com/sweets86/myBackend#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  }
+}
