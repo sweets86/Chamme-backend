@@ -16,11 +16,25 @@ app.use(cors());
 app.use(express.static("client"));
 
 let orders = [];
-let updateInfoToSave = [];
-let savingData = [];
+let updateInfoToSaveToServer = [];
+let savingDataToServer = [];
+let sendingDataToFrontend = [];
 
 app.post("/sending-data", urlencodedParser, function (req, res) {
   res.json("data");
+
+  const tryThis = {
+    info: req.body.info,
+    cart: req.body.cart,
+    extras: req.body.extras,
+    totalSumProducts: req.body.totalPriceProducts,
+    VAT: req.body.VAT,
+    deliveryPrice: req.body.deliveryPrice,
+    totalAmount: req.body.totalAmount,
+    totalQuantity: req.body.totalQuantity,
+  };
+
+  sendingDataToFrontend.push(tryThis);
 
   const updateDataToSave = {
     info: req.body.info,
@@ -28,13 +42,13 @@ app.post("/sending-data", urlencodedParser, function (req, res) {
     extras: req.body.extras,
   };
 
-  updateInfoToSave.push(updateDataToSave);
+  updateInfoToSaveToServer.push(updateDataToSave);
 
   let orderCart;
   let orderExtras;
 
-  for (let i = 0; i < updateInfoToSave.length; i++) {
-    let order = updateInfoToSave[i];
+  for (let i = 0; i < updateInfoToSaveToServer.length; i++) {
+    let order = updateInfoToSaveToServer[i];
     let firstName = order.info[0].firstName;
     let lastName = order.info[0].lastName;
     let address = order.info[0].address;
@@ -59,7 +73,7 @@ app.post("/sending-data", urlencodedParser, function (req, res) {
       totalAmount: req.body.totalAmount,
       totalQuantity: req.body.totalQuantity,
     };
-    savingData.push(commonDataToSave);
+    savingDataToServer.push(commonDataToSave);
   }
 
   for (let i = 0; i < orderCart.length; i++) {
@@ -76,7 +90,7 @@ app.post("/sending-data", urlencodedParser, function (req, res) {
       productPrice: price,
       productQuantity: quantity,
     };
-    savingData.push(productDataToSave);
+    savingDataToServer.push(productDataToSave);
   }
 
   for (let i = 0; i < orderExtras.length; i++) {
@@ -89,10 +103,8 @@ app.post("/sending-data", urlencodedParser, function (req, res) {
       extrasSize: extrasSize,
       productId: productId,
     };
-    savingData.push(extrasToSave);
+    savingDataToServer.push(extrasToSave);
   }
-
-  console.log(savingData);
 });
 
 app.post("/checkout-session", async (req, res) => {
@@ -141,7 +153,11 @@ app.post("/verify-checkout-session", async (req, res) => {
     amount: totalAmount,
   };
 
-  savingData.push(savingInfo);
+  const str = jsonorder;
+  const orderNumber = str.substring(0, 14);
+
+  savingDataToServer.push(savingInfo);
+  sendingDataToFrontend.push({orderNumber: orderNumber});
 
   try {
     const session = await stripe.checkout.sessions.retrieve(req.body.sessionId);
@@ -151,7 +167,7 @@ app.post("/verify-checkout-session", async (req, res) => {
       if (session.id == jsonorder) {
         fs.appendFile(
           "file.json",
-          JSON.stringify(savingData, null, 2),
+          JSON.stringify(savingDataToServer, null, 2),
           (error) => {
             if (error) {
               throw error;
@@ -170,13 +186,14 @@ app.post("/verify-checkout-session", async (req, res) => {
 
 app.get("/order/:id", (req, res) => {
   let sessionId;
-  for (let i = 0; i < savingData.length; i++) {
-    let order = savingData[i];
+  let order;
+  for (let i = 0; i < savingDataToServer.length; i++) {
+    order = savingDataToServer[i];
     sessionId = order.sessionId;
   }
 
   if (sessionId == req.params.id) {
-    res.json(savingData);
+    res.json(sendingDataToFrontend);
   }
 });
 
