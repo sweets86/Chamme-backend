@@ -4,11 +4,13 @@ const app = express();
 const port = 5000;
 const fs = require("fs");
 const cors = require("cors");
+const bodyParser = require("body-parser");
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 console.log(process.env.STRIPE_SECRET_KEY);
 
-app.use("/api", express.json());
+app.use("/", express.json());
 
 app.use(cors());
 app.use(express.static("client"));
@@ -17,9 +19,14 @@ app.use(express.static("client"));
 }) */
 
 let orders = [];
-let saveInfo = []
+let saveInfo = [];
 
-app.post("/api/checkout-session", async (req, res) => {
+app.post("/sending-data", urlencodedParser, function (req, res) {
+  console.log(req.body);
+  res.json("data");
+});
+
+app.post("/checkout-session", async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -46,7 +53,7 @@ app.post("/api/checkout-session", async (req, res) => {
   }
 });
 
-app.post("/api/verify-checkout-session", async (req, res) => {
+app.post("/verify-checkout-session", async (req, res) => {
   let totalAmount;
   let jsonorder;
   for (let i = 0; i < orders.length; i++) {
@@ -90,7 +97,7 @@ app.post("/api/verify-checkout-session", async (req, res) => {
   }
 });
 
-app.get("/api/order/:id", (req, res) => {
+app.get("/order/:id", (req, res) => {
   const order = orders.find((order) => order.sessionId == req.params.id);
   res.json(order);
   orders.splice(order, 1);
