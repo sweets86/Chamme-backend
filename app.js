@@ -79,13 +79,15 @@ app.post("/sending-data", urlencodedParser, function (req, res) {
   for (let i = 0; i < orderCart.length; i++) {
     let id = orderCart[i].id;
     let title = orderCart[i].title;
+    let brand = orderCart[i].brand;
     let name = orderCart[i].name;
     let price = orderCart[i].price;
     let quantity = orderCart[i].quantity;
 
     const productDataToSave = {
       productId: id,
-      productBrand: title,
+      productTitle: title,
+      productBrand: brand,
       productName: name,
       productPrice: price,
       productQuantity: quantity,
