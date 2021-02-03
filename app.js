@@ -23,7 +23,7 @@ let sendingDataToFrontend = [];
 app.post("/sending-data", urlencodedParser, function (req, res) {
   res.json("data");
 
-  const tryThis = {
+  const sendToFrontend = {
     info: req.body.info,
     cart: req.body.cart,
     extras: req.body.extras,
@@ -34,7 +34,7 @@ app.post("/sending-data", urlencodedParser, function (req, res) {
     totalQuantity: req.body.totalQuantity,
   };
 
-  sendingDataToFrontend.push(tryThis);
+  sendingDataToFrontend.push(sendToFrontend);
 
   const updateDataToSave = {
     info: req.body.info,
@@ -157,7 +157,7 @@ app.post("/verify-checkout-session", async (req, res) => {
   const orderNumber = str.substring(0, 14);
 
   savingDataToServer.push(savingInfo);
-  sendingDataToFrontend.push({orderNumber: orderNumber});
+  sendingDataToFrontend.push({ orderNumber: orderNumber });
 
   try {
     const session = await stripe.checkout.sessions.retrieve(req.body.sessionId);
@@ -193,7 +193,7 @@ app.get("/order/:id", (req, res) => {
   }
 
   if (sessionId == req.params.id) {
-    res.json(sendingDataToFrontend);
+    res.json({ data: sendingDataToFrontend });
   }
 });
 
