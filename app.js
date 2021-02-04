@@ -6,19 +6,13 @@ const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
-const path = require("path");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 console.log(process.env.STRIPE_SECRET_KEY);
 
 app.use(cors());
-
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"),express.json());
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client", "build", "index.html"));
-  });
-}
+app.use('/',express.json())
+app.use(express.static("client"));
 
 let orders = [];
 let updateInfoToSaveToServer = [];
