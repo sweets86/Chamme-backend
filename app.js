@@ -1,19 +1,25 @@
 const express = require("express");
 require("dotenv").config(".env");
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
+const path = require("path");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 console.log(process.env.STRIPE_SECRET_KEY);
 
 app.use("/", express.json());
-
 app.use(cors());
-app.use(express.static("client"));
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+  });
+}
 
 let orders = [];
 let updateInfoToSaveToServer = [];
