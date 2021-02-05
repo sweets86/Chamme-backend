@@ -1,7 +1,7 @@
 const express = require("express");
 require("dotenv").config(".env");
 const app = express();
-const port = process.env.PORT || 5000;
+const port = 5000;
 const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -116,7 +116,7 @@ app.post("/checkout-session", async (req, res) => {
       mode: req.body.mode,
       success_url:
         "http://localhost:3000/confirmation/?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "http://localhost:5000",
+      cancel_url: "http://localhost:3000/cancel",
     });
 
     if (session.id) {
